@@ -1,5 +1,5 @@
-from keras.layers import Layer
-from keras.models import Model
+from tensorflow.keras.layers import Layer
+from tensorflow.keras.models import Model
 import tensorflow as tf
 
 # This layer will do the preprocessing of an image.
