@@ -10,8 +10,9 @@ To use it in production environments there are some improvements to do. The goal
 - [x] Yolo3 training (warmup and multi-scale)
 - [x] Preprocessing layer
 - [ ] Tensorflow serving export scripts
+- [ ] TF Serving Rest/gRPC examples
 - [ ] Postprocessing layer
-- [ ] training and model creation adjustment
+- [ ] training and model creation improvements
 
 ## Dataset and Model
 
@@ -111,6 +112,34 @@ By the end of this process, the code will write the weights of the best model to
 `python predict.py -c config.json -i /path/to/image/or/video`
 
 It carries out detection on the image and write the image with detected bounding boxes to the same folder.
+
+## Tensorflow serving
+
+TensorFlow Serving is a flexible, high-performance serving system for machine learning models, designed for production environments. TensorFlow Serving provides out-of-the-box integration with TensorFlow models, but can be easily extended to serve other types of models and data. 
+(https://www.tensorflow.org/serving)
+
+You have to train your model with keras like described above. 
+
+#### 1. Export your Model
+Use it to convert a keras model to tensorflow serving.
+
+`python3 serving/export_tf_serving.py -m voc.h5 -v 1 -t models/voc`
+
+#### 2. Run tf serving
++ Change paths of `serving/serving.config`
++ Pull docker image `docker pull tensorflow/serving`
+
++ Run docker image `docker run 
+-p 8500:8500 -p 8501:8501 
+--mount type=bind,source=/path/to/my_model/,target=/models/my_model 
+--mount type=bind,source=/path/to/my/models.config,target=/models/models.config 
+-t tensorflow/serving 
+--model_config_file=/models/models.config`
+
+You have to mount all of your models to the docker image path `/models/` and the config to `/models/models.config`
+
+#### 3. Example scripts
+TODO
 
 ## Evaluation
 
