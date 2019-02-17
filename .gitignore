@@ -2,3 +2,5 @@
 *.jpeg
 *.weights
 *.h5
+.idea/**
+*.iml
