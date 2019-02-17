@@ -1,4 +1,17 @@
-# YOLO3 (Detection, Training, and Evaluation)
+# YOLO3 (Detection, Training and Serving)
+
+Big thanks to experiencor (https://github.com/experiencor). It's a good implementation of the yolov3 in keras.
+To use it in production environments there are some improvements to do. The goal is to run these models in tensorflow serving without the need of pre or postprocessing.
+
+
+
+## Todo list:
+- [x] Yolo3 detection
+- [x] Yolo3 training (warmup and multi-scale)
+- [x] Preprocessing layer
+- [ ] Tensorflow serving export scripts
+- [ ] Postprocessing layer
+- [ ] training and model creation adjustment
 
 ## Dataset and Model
 
@@ -9,14 +22,7 @@ Raccoon Detection (1 class) (https://github.com/experiencor/raccoon_dataset) | 9
 Red Blood Cell Detection (3 classes) (https://github.com/experiencor/BCCD_Dataset) | 84% | https://imgur.com/a/uJl2lRI | check zoo | http://bit.do/ekQFc
 VOC (20 classes) (http://host.robots.ox.ac.uk/pascal/VOC/voc2012/) | 72% | https://youtu.be/0RmOI6hcfBI | check zoo | http://bit.do/ekQE5
 
-## Todo list:
-- [x] Yolo3 detection
-- [x] Yolo3 training (warmup and multi-scale)
-- [x] mAP Evaluation
-- [x] Multi-GPU training
-- [x] Evaluation on VOC
-- [ ] Evaluation on COCO
-- [ ] MobileNet, DenseNet, ResNet, and VGG backends
+
 
 ## Detection
 
