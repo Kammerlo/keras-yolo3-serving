@@ -2,39 +2,6 @@ from tensorflow.keras.layers import Layer
 from tensorflow.keras.models import Model
 import tensorflow as tf
 
-# This layer will do the preprocessing of an image.
-# It's creating the letterbox image to fit the grid size.
-# It's using a fixed net_size. It's not recommended to use it for training. Just use it for tensorflow serving
-class PreprocessLayer(Layer):
-
-    def __init__(self,net_size,**kwargs):
-        super(PreprocessLayer,self).__init__(**kwargs)
-        self.net_size = net_size
-
-    # this will work only for single images passed to the layer
-    def call(self,x):
-        resized = tf.image.resize_images(
-            x,
-            (self.net_size,self.net_size),
-            preserve_aspect_ratio=True)
-        img_shape = tf.shape(resized)
-        height_offset = (self.net_size - img_shape[0]) / 2
-        width_offset = (self.net_size - img_shape[1]) / 2
-        padded = tf.image.pad_to_bounding_box(
-            image=resized,
-            offset_height=tf.cast(height_offset,dtype=tf.int32),
-            offset_width=tf.cast(width_offset,dtype=tf.int32),
-            target_height=self.net_size,
-            target_width=self.net_size) / 255.0
-        expanded = tf.expand_dims(padded,0)
-        return expanded
-
-
-    def compute_output_shape(self,input_shape):
-        return (1,self.net_size,self.net_size,3)
-
-
-
 class YoloLayer(Layer):
     def __init__(self, anchors, max_grid, batch_size, warmup_batches, ignore_thresh,
                  grid_scale, obj_scale, noobj_scale, xywh_scale, class_scale,

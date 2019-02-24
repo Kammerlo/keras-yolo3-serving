@@ -1,7 +1,7 @@
 # YOLO3 (Detection, Training and Serving)
 
 Big thanks to experiencor (https://github.com/experiencor). It's a good implementation of the yolov3 in keras.
-To use it in production environments there are some improvements to do. The goal is to run these models in tensorflow serving without the need of pre or postprocessing.
+To use it in production environments there are some improvements to do. The goal is to run these models in tensorflow serving without the need of pre- or postprocessing.
 
 
 
@@ -9,9 +9,9 @@ To use it in production environments there are some improvements to do. The goal
 - [x] Yolo3 detection
 - [x] Yolo3 training (warmup and multi-scale)
 - [x] Preprocessing layer
-- [ ] Tensorflow serving export scripts
+- [x] Tensorflow serving export scripts
+- [x] Postprocessing layer
 - [ ] TF Serving Rest/gRPC examples
-- [ ] Postprocessing layer
 - [ ] training and model creation improvements
 
 ## Dataset and Model
