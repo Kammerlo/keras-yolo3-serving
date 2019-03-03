@@ -1,6 +1,65 @@
-from keras.callbacks import TensorBoard, ModelCheckpoint
+import io
+
+from keras.callbacks import TensorBoard, ModelCheckpoint, Callback
 import tensorflow as tf
 import numpy as np
+
+from utils.bbox import draw_boxes
+from utils.utils import get_yolo_boxes
+
+
+def make_image(tensor):
+    """
+    Convert an numpy representation image to Image protobuf.
+    Copied from https://github.com/lanpa/tensorboard-pytorch/
+    """
+    from PIL import Image
+    height, width, channel = tensor.shape
+    image = Image.fromarray(tensor)
+    output = io.BytesIO()
+    image.save(output, format='PNG')
+    image_string = output.getvalue()
+    output.close()
+    return tf.Summary.Image(height=height,
+                            width=width,
+                            colorspace=channel,
+                            encoded_image_string=image_string)
+
+class TensorBoardImage(Callback):
+    def __init__(self, tag,labels,infer_model=None,valid_generator=None,anchors=None,log_dir= './logs',img_count=5):
+        super().__init__()
+        self.tag = tag
+        self.obj_thresh, self.nms_thresh = 0.8, 0.6
+        self.net_h, self.net_w = 416, 416
+        self.valid_generator = valid_generator
+        self.infer_model = infer_model
+        self.anchors = anchors
+        self.log_dir = log_dir
+        self.labels = labels
+        if len(self.valid_generator.instances) < img_count:
+            self.img_count = len(self.valid_generator.instances)
+        else:
+            self.img_count = img_count
+
+    def on_epoch_end(self, epoch, logs={}):
+        writer = tf.summary.FileWriter(self.log_dir)
+        for i in range(self.img_count):
+            # Load image
+            img = self.valid_generator.load_image(i)
+            try:
+                boxes = get_yolo_boxes(self.infer_model,[img],self.net_h,self.net_w,self.anchors,self.obj_thresh,self.nms_thresh)
+                draw_boxes(img, boxes[0], self.labels, self.obj_thresh)
+            except ZeroDivisionError:
+                print("Zero")
+
+            image = make_image(img)
+            summary = tf.Summary(value=[tf.Summary.Value(tag=self.tag + "_" + str(i), image=image)])
+
+            writer.add_summary(summary, epoch)
+        writer.close()
+
+        return
+
 
 class CustomTensorBoard(TensorBoard):
     """ to log the loss after each batch

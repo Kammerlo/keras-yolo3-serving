@@ -10,7 +10,7 @@ from generator import BatchGenerator
 from utils.utils import normalize, evaluate, makedirs
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.optimizers import Adam
-from callbacks import CustomModelCheckpoint, CustomTensorBoard
+from callbacks import CustomModelCheckpoint, CustomTensorBoard, TensorBoardImage
 from utils.multi_gpu_model import multi_gpu_model
 import tensorflow as tf
 import keras
@@ -62,9 +62,10 @@ def create_training_instances(
 
     return train_ints, valid_ints, sorted(labels), max_box_per_image
 
-def create_callbacks(saved_weights_name, tensorboard_logs, model_to_save):
+def create_callbacks( model_to_save,config,valid_generator):
+    saved_weights_name = config['train']['saved_weights_name']
+    tensorboard_logs = config['train']['tensorboard']["log_dir"]
     makedirs(tensorboard_logs)
-    
     early_stop = EarlyStopping(
         monitor     = 'loss', 
         min_delta   = 0.01, 
@@ -95,8 +96,15 @@ def create_callbacks(saved_weights_name, tensorboard_logs, model_to_save):
         log_dir                = tensorboard_logs,
         write_graph            = True,
         write_images           = True,
-    )    
-    return [early_stop, checkpoint, reduce_on_plateau, tensorboard]
+    )
+    tensorboardImage = TensorBoardImage(tag=config["train"]["tensorboard"]["tag"],
+                                        labels=config["model"]["labels"],
+                                        infer_model=model_to_save,
+                                        valid_generator=valid_generator,
+                                        log_dir=tensorboard_logs,
+                                        anchors=config["model"]["anchors"],
+                                        img_count=config["train"]["tensorboard"]["img_count"])
+    return [early_stop, checkpoint, reduce_on_plateau, tensorboard,tensorboardImage]
 
 def create_model(
     nb_class, 
@@ -245,7 +253,7 @@ def _main_(args):
     ###############################
     #   Kick off the training
     ###############################
-    callbacks = create_callbacks(config['train']['saved_weights_name'], config['train']['tensorboard_dir'], infer_model)
+    callbacks = create_callbacks(infer_model,config,valid_generator)
 
     train_model.fit_generator(
         generator        = train_generator, 
@@ -274,7 +282,7 @@ def _main_(args):
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description='train and evaluate YOLO_v3 model on any dataset')
-    argparser.add_argument('-c', '--conf', help='path to configuration file')   
+    argparser.add_argument('-c', '--conf', help='path to configuration file',default=os.path.join("zoo","config_voc.json"))
 
     args = argparser.parse_args()
     _main_(args)
