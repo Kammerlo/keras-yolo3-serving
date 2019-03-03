@@ -28,7 +28,10 @@ def export_h5_to_pb(path_to_h5,model_version, export_path):
     keras_model = load_model(path_to_h5)
 
 
-    x = keras_model(preproc)
+    x = keras_model(preproc[0])
+    # Bypass the input image shape to get the exact bounding box coordinates
+    # Keras doesn't like a list in a list as an input, so [x,preproc[1]] doesn't work.
+    x.append(preproc[1])
     x = PostprocessLayer()(x)
     model = Model(inputs=input,outputs=x)
 

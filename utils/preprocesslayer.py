@@ -13,6 +13,7 @@ class PreprocessLayer(Layer):
         tf_b64 = tf.decode_base64(x[0])
         img = tf.image.decode_jpeg(tf_b64,channels=3)
         img = tf.cast(img,dtype=tf.float32)
+        orig_shape = tf.shape(img)
         resized = tf.image.resize_images(
             img,
             (self.net_size,self.net_size),
@@ -28,7 +29,7 @@ class PreprocessLayer(Layer):
             target_width=self.net_size) / 255.0
         expanded = tf.expand_dims(padded,0)
 
-        return expanded
+        return [expanded,orig_shape]
 
     def compute_output_shape(self,input_shape):
-        return (1,self.net_size,self.net_size,3)
+        return [(1,self.net_size,self.net_size,3),(None,2)]

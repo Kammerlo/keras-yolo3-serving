@@ -12,13 +12,16 @@ class PostprocessLayer(Layer):
         super(PostprocessLayer,self).__init__(**kwargs)
         self.net_size = 416
         self.classes_num = 20
-        self.obj_threshold = 0.5
+        self.obj_threshold = 0.7
         self.max_boxes = 20
         self.anchors =[55,69, 75,234, 133,240, 136,129, 142,363, 203,290, 228,184, 285,359, 341,260]
         self.anchors = np.array(self.anchors).reshape(-1, 2)
         self.anchor_mask = [[6, 7, 8], [3, 4, 5], [0, 1, 2]]
         self.nms_threshold = 0.45
-        self.image_shape = (768,576)
+
+    def build(self, input_shape):
+        assert isinstance(input_shape,list)
+        super(PostprocessLayer,self).build(input_shape)
 
     def _get_feats(self,feats, anchors, num_classes, input_shape):
 
@@ -72,7 +75,11 @@ class PostprocessLayer(Layer):
 
     # this will work only for single images passed to the layer
     def call(self,x):
-        yolo_outputs = x
+        assert isinstance(x, list)
+        shape_tensor = x[3]
+        shape_tensor = tf.Print(shape_tensor,[shape_tensor],"img_shape")
+        self.image_shape = (shape_tensor[0],shape_tensor[1])
+        yolo_outputs = x[:3]
         boxes = []
         box_scores = []
         input_shape = tf.shape(yolo_outputs[0])[1 : 3] * 32
@@ -113,6 +120,5 @@ class PostprocessLayer(Layer):
 
         return [boxes_,classes_,scores_]
 
-# need to read more about keras behaviour of the output shape
     def compute_output_shape(self,input_shape):
         return [(None, 3),(None, 1),(None, 1)]
