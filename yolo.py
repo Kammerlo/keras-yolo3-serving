@@ -1,7 +1,6 @@
 from keras.layers import Conv2D, Input, BatchNormalization, LeakyReLU, ZeroPadding2D, UpSampling2D, Lambda
 from keras.layers.merge import add, concatenate
 from keras.models import Model
-from keras.engine.topology import Layer
 import tensorflow as tf
 
 from utils.yololayer import YoloLayer
@@ -43,6 +42,9 @@ def create_yolov3_model(
     class_scale
 ):
     input_image = Input(shape=(None, None, 3)) # net_h, net_w, 3
+
+
+
     true_boxes  = Input(shape=(1, 1, 1, max_box_per_image, 4))
     true_yolo_1 = Input(shape=(None, None, len(anchors)//6, 4+1+nb_class)) # grid_h, grid_w, nb_anchor, 5+nb_class
     true_yolo_2 = Input(shape=(None, None, len(anchors)//6, 4+1+nb_class)) # grid_h, grid_w, nb_anchor, 5+nb_class

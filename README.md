@@ -11,7 +11,8 @@ To use it in production environments there are some improvements to do. The goal
 - [x] Preprocessing layer
 - [x] Tensorflow serving export scripts
 - [x] Postprocessing layer
-- [ ] TF Serving Rest/gRPC examples
+- [x] TF Serving Rest
+- [x] Reuploaded backend weights
 - [ ] training and model creation improvements
 
 ## Dataset and Model
@@ -92,7 +93,7 @@ The ```labels``` setting lists the labels to be trained on. Only images, which h
 
 Download pretrained weights for backend at:
 
-https://1drv.ms/u/s!ApLdDEW3ut5fgQXa7GzSlG-mdza6
+https://drive.google.com/open?id=1RnA-N7z-rEKEPF6X29TQX34e_b3Gr93w
 
 **This weights must be put in the root folder of the repository. They are the pretrained weights for the backend only and will be loaded during model creation. The code does not work without this weights.**
 
