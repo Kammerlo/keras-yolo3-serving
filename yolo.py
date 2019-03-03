@@ -4,6 +4,9 @@ from keras.models import Model
 from keras.engine.topology import Layer
 import tensorflow as tf
 
+from utils.yololayer import YoloLayer
+
+
 def _conv_block(inp, convs, do_skip=True):
     x = inp
     count = 0
