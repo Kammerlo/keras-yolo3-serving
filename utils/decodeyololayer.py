@@ -115,7 +115,7 @@ class DecodeYoloLayer(Layer):
 
         # boxes_ = tf.Print(boxes_,[tf.shape(boxes_), tf.shape(scores_), tf.shape(classes_)],"boxes_ shape:")
 
-        return [boxes_,classes_,scores_]
+        return [tf.cast(boxes_,tf.int32),tf.cast(classes_,tf.int32),scores_]
 
     def compute_output_shape(self,input_shape):
         return [(None, 3),(None, 1),(None, 1)]
