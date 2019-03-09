@@ -1,3 +1,5 @@
+import json
+
 from keras.models import load_model
 import keras.backend as K
 from keras.layers import Input
@@ -11,18 +13,21 @@ import argparse
 import os
 import cv2
 
-from utils.postprocesslayer import PostprocessLayer
-from utils.preprocesslayer import PreprocessLayer
+from utils.base64layer import Base64DecodeLayer
+from utils.decodeyololayer import DecodeYoloLayer
+from utils.letterboxlayer import LetterBoxLayer
 
 
-def export_h5_to_pb(path_to_h5,model_version, export_path):
+def export_h5_to_pb(path_to_h5,model_version, export_path,config_path):
+    with open(config_path) as config_buffer:
+        config = json.loads(config_buffer.read())
     # Set the learning phase to Test since the model is already trained.
     K.set_learning_phase(0)
 
 
     input = Input(batch_shape=(1,),dtype=tf.string)
-
-    preproc = PreprocessLayer(net_size=416)(input)
+    b64 = Base64DecodeLayer()(input)
+    preproc = LetterBoxLayer(net_size=416)(b64)
 
 
     keras_model = load_model(path_to_h5)
@@ -32,7 +37,7 @@ def export_h5_to_pb(path_to_h5,model_version, export_path):
     # Bypass the input image shape to get the exact bounding box coordinates
     # Keras doesn't like a list in a list as an input, so [x,preproc[1]] doesn't work.
     x.append(preproc[1])
-    x = PostprocessLayer()(x)
+    x = DecodeYoloLayer(anchors=config["model"]["anchors"], classes_num=len(config["model"]["labels"]), net_size=416)(x)
     model = Model(inputs=input,outputs=x)
 
 
@@ -67,7 +72,8 @@ if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description='Export your yolo3 to use it with tensorflow serving.')
     argparser.add_argument('-m', '--model', help='path to keras model.',default="voc.h5")
     argparser.add_argument('-t', '--tensor', help='path to exported tensorflow model',default="models\\voc")
+    argparser.add_argument('-c', '--config', help='path to training config file',default="..\\zoo\\config_voc.json")
     argparser.add_argument('-v', '--version', help='Model version',default=1)
     args = argparser.parse_args()
 
-    export_h5_to_pb(args.model,args.version,args.tensor)
+    export_h5_to_pb(args.model,args.version,args.tensor,args.config)

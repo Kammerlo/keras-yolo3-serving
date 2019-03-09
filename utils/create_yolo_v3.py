@@ -171,6 +171,8 @@ def create_yolov3_model(
                             class_scale)([input_image, pred_yolo_3, true_yolo_3, true_boxes]) 
 
     train_model = Model([input_image, true_boxes, true_yolo_1, true_yolo_2, true_yolo_3], [loss_yolo_1, loss_yolo_2, loss_yolo_3])
+
+
     infer_model = Model(input_image, [pred_yolo_1, pred_yolo_2, pred_yolo_3])
 
     return [train_model, infer_model]

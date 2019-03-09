@@ -2,14 +2,10 @@
 
 import argparse
 import os
-import numpy as np
 import json
-from voc import parse_voc_annotation
-from yolo import create_yolov3_model
-from generator import BatchGenerator
+from utils.voc import parse_voc_annotation
+from utils.generator import BatchGenerator
 from utils.utils import normalize, evaluate
-from keras.callbacks import EarlyStopping, ModelCheckpoint
-from keras.optimizers import Adam
 from keras.models import load_model
 
 def _main_(args):

@@ -2,7 +2,7 @@ import random
 import argparse
 import numpy as np
 
-from voc import parse_voc_annotation
+from utils.voc import parse_voc_annotation
 import json
 
 def IOU(ann, centroids):

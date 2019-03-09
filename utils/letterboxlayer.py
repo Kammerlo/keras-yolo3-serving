@@ -1,10 +1,10 @@
 from keras.engine import Layer
 import tensorflow as tf
 
-class PreprocessLayer(Layer):
+class LetterBoxLayer(Layer):
 
     def __init__(self,net_size,**kwargs):
-        super(PreprocessLayer,self).__init__(**kwargs)
+        super(LetterBoxLayer, self).__init__(**kwargs)
         self.net_size = net_size
 
     # this will work only for single images passed to the layer

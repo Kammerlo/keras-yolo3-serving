@@ -2,11 +2,11 @@ from keras.engine import Layer
 import tensorflow as tf
 import numpy as np
 
-class PostprocessLayer(Layer):
+class DecodeYoloLayer(Layer):
 
     # Currently just with a fixed image size
     def __init__(self,anchors,classes_num,net_size, obj_threshold = 0.7, max_boxes = 20,  nms_threshold = 0.45,**kwargs):
-        super(PostprocessLayer,self).__init__(**kwargs)
+        super(DecodeYoloLayer, self).__init__(**kwargs)
         self.net_size = net_size
         self.classes_num = classes_num
         self.obj_threshold = obj_threshold
@@ -18,7 +18,7 @@ class PostprocessLayer(Layer):
 
     def build(self, input_shape):
         assert isinstance(input_shape,list)
-        super(PostprocessLayer,self).build(input_shape)
+        super(DecodeYoloLayer, self).build(input_shape)
 
     def _get_feats(self,feats, anchors, num_classes, input_shape):
 
