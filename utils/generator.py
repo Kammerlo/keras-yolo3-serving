@@ -183,7 +183,8 @@ class BatchGenerator(Sequence):
         
         # apply scaling and cropping
         im_sized = apply_random_scale_and_crop(image, new_w, new_h, net_w, net_h, dx, dy)
-        
+
+
         # randomly distort hsv space
         im_sized = random_distort_image(im_sized)
         

@@ -4,3 +4,5 @@
 *.h5
 .idea/**
 *.iml
+__pycache__/
+

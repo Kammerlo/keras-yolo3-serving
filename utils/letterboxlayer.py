@@ -7,6 +7,14 @@ class LetterBoxLayer(Layer):
         super(LetterBoxLayer, self).__init__(**kwargs)
         self.net_size = net_size
 
+    # save config to save and load the keras model correctly
+    def get_config(self):
+        config = {
+            'net_size': self.net_size
+        }
+        base_config = super(LetterBoxLayer, self).get_config()
+        return dict(list(base_config.items()) + list(config.items()))
+
     # this will work only for single images passed to the layer
     def call(self,img):
         ## This is just compatible with tf.__version__ >= 1.13

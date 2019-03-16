@@ -16,6 +16,19 @@ class DecodeYoloLayer(Layer):
         self.anchor_mask = [[6, 7, 8], [3, 4, 5], [0, 1, 2]]
         self.nms_threshold = nms_threshold
 
+    # save config to save and load the keras model correctly
+    def get_config(self):
+        config = {
+            'anchors' : self.anchors,
+            'classes_num': self.classes_num,
+            'net_size': self.net_size,
+            'obj_threshold': self.obj_threshold,
+            'max_boxes': self.max_boxes,
+            'nms_threshold': self.nms_threshold
+        }
+        base_config = super(DecodeYoloLayer, self).get_config()
+        return dict(list(base_config.items()) + list(config.items()))
+
     def build(self, input_shape):
         assert isinstance(input_shape,list)
         super(DecodeYoloLayer, self).build(input_shape)
